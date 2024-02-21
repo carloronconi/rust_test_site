@@ -1,3 +1,4 @@
+use std::fmt::Error;
 use std::io;
 use crate::lib_collections::Command;
 
@@ -19,6 +20,17 @@ fn main() {
         let command = Command::new(input.as_str());
         input.clear();
 
-        println!("Created command:\n{:?}", command);
+        let command = match command {
+            Ok(c) => {
+                println!("Submitting command: {:?}", c);
+                c
+            },
+            Err(_) => {
+                println!("Wrong input formatting! Please try again...");
+                continue;
+            }
+        };
+
+        command.submit();
     }
 }
