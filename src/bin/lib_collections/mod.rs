@@ -15,7 +15,7 @@ impl Storage {
         }
     }
 
-    pub fn submit(&mut self, command: &Command) {
+    pub fn submit(&mut self, command: &Command) -> Result<(), Error> {
         match command {
             Command::Create(e) => {
                 match e {
@@ -30,20 +30,33 @@ impl Storage {
                             .or_insert(vec![])
                             .push(usr.clone()); }
                 }
+                Ok(()) // creation can't fail
             }
             Command::Delete(e) => {
                 match e {
-                    Entity::Group(n) => { self.groups.remove(n.as_str()); }
-                    Entity::User(n) => { self.users.retain(|u| !u.eq(n)); }
+                    Entity::Group(n) => {
+                        if self.groups.remove(n.as_str()).is_none() {
+                            return Err(Error)
+                        }}
+                    Entity::User(n) => {
+                        if !self.users.contains(n) {
+                            return Err(Error)
+                        }
+                        self.users.retain(|u| !u.eq(n)); }
                     Entity::Relation(usr, group) => {
+                        if !self.groups.get(group.as_str()).is_some_and(|g| g.contains(usr)) {
+                            return Err(Error)
+                        }
                         self.groups
                             .entry(group.clone())
                             .and_modify(|v| v.retain(|u| !u.eq(usr)));
                     }
                 }
+                Ok(())
             }
             Command::Read(_) => {
-                println!("{:?}", self)
+                println!("{:?}", self);
+                Ok(())
             }
         }
     }

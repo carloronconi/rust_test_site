@@ -1,3 +1,4 @@
+use std::fmt::Error;
 use std::io;
 use crate::lib_collections::{Command, Storage};
 
@@ -31,6 +32,9 @@ fn main() {
             }
         };
 
-        storage.submit(&command);
+        match storage.submit(&command) {
+            Ok(_) => {println!("Success!")}
+            Err(_) => {println!("Failed to perform command...")}
+        };
     }
 }
