@@ -1,12 +1,12 @@
-use std::fmt::Error;
 use std::io;
-use crate::lib_collections::Command;
+use crate::lib_collections::{Command, Storage};
 
 mod lib_collections;
 
 // solving last problem at https://doc.rust-lang.org/book/ch08-03-hash-maps.html
 fn main() {
     let mut input = String::new();
+    let mut storage = Storage::new();
 
     loop {
 
@@ -31,6 +31,6 @@ fn main() {
             }
         };
 
-        command.submit();
+        storage.submit(&command);
     }
 }

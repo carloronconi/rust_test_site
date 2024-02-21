@@ -1,7 +1,52 @@
+use std::collections::HashMap;
 use std::fmt::Error;
 
-pub trait RunCommand {
-    fn submit(command: &str) -> Result<String, Error>;
+#[derive(Debug)]
+pub struct Storage {
+    users: Vec<String>,
+    groups: HashMap<String, Vec<String>>,
+}
+
+impl Storage {
+    pub fn new() -> Self {
+        Self {
+            users: vec![],
+            groups: HashMap::new(),
+        }
+    }
+
+    pub fn submit(&mut self, command: &Command) {
+        match command {
+            Command::Create(e) => {
+                match e {
+                    Entity::Group(n) => {
+                        self.groups
+                            .entry(n.clone())
+                            .or_insert(vec![]); }
+                    Entity::User(n) => self.users.push(n.clone()),
+                    Entity::Relation(usr, group) => {
+                        self.groups
+                            .entry(group.clone())
+                            .or_insert(vec![])
+                            .push(usr.clone()); }
+                }
+            }
+            Command::Delete(e) => {
+                match e {
+                    Entity::Group(n) => { self.groups.remove(n.as_str()); }
+                    Entity::User(n) => { self.users.retain(|u| !u.eq(n)); }
+                    Entity::Relation(usr, group) => {
+                        self.groups
+                            .entry(group.clone())
+                            .and_modify(|v| v.retain(|u| !u.eq(usr)));
+                    }
+                }
+            }
+            Command::Read(_) => {
+                println!("{:?}", self)
+            }
+        }
+    }
 }
 
 #[derive(Debug)]
