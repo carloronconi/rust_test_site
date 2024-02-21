@@ -1,4 +1,5 @@
 use std::io;
+use crate::lib_collections::Command;
 
 mod lib_collections;
 
@@ -7,15 +8,17 @@ fn main() {
     let mut input = String::new();
 
     loop {
-        // ((add|remove|detail) (group|user) [name])|(add/remove/detail membership [name-of-user] into [name-of-group])
 
-        println!("Write a prompt to interact with the user datastore:\n
-            \t- change groups `add/remove/detail group [name-of-group]'\n
-            \t- change users `add/remove/detail user [name-of-user]'\n
-            \t- change membership between users and groups 'add/remove/detail membership [name-of-user]\
-            \t  into/into/into [name of group]'");
+        println!("Write a prompt to interact with the user datastore:
+- change groups `add/remove/detail group [name-of-group]'
+- change users `add/remove/detail user [name-of-user]'
+- change membership between users and groups 'add/remove/detail membership [name-of-user] into/into/into [name of group]'");
 
         io::stdin().read_line(&mut input).unwrap();
 
+        let command = Command::new(input.as_str());
+        input.clear();
+
+        println!("Created command:\n{:?}", command);
     }
 }
