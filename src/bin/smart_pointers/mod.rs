@@ -36,3 +36,29 @@ impl<T> BinTree<T> for ImmBinTree<T> {
     }
 }
 
+#[derive(Debug)]
+pub struct MultiOwnBinTree<T> {
+    val: T,
+    left: Option<Rc<MultiOwnBinTree<T>>>,
+    right: Option<Rc<MultiOwnBinTree<T>>>,
+}
+
+impl<T> MultiOwnBinTree<T> {
+    pub fn new(val: T, left: Option<Rc<MultiOwnBinTree<T>>>, right: Option<Rc<MultiOwnBinTree<T>>>) -> Self {
+        Self {val, left, right}
+    }
+}
+
+impl<T> BinTree<T> for MultiOwnBinTree<T> {
+    fn val(&self) -> &T {
+        &self.val
+    }
+
+    fn left(&self) -> Option<&Self> {
+        self.left.as_ref().map(|t| t.as_ref())
+    }
+
+    fn right(&self) -> Option<&Self> {
+        self.left.as_ref().map(|t| t.as_ref())
+    }
+}
